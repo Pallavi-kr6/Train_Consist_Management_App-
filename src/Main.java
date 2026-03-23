@@ -1,20 +1,66 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class Main {
+class Transaction {
+    String id;
+    double fee;
+    String timestamp;
 
-    public static void main(String[] args) {
+    Transaction(String id, double fee, String timestamp) {
+        this.id = id;
+        this.fee = fee;
+        this.timestamp = timestamp;
+    }
 
-        // Welcome message
-        System.out.println("=== Train Consist Management App ===");
+    public String toString() {
+        return id + ":" + fee + "@" + timestamp;
+    }
+}
 
-        // Initialize an empty list of bogies
-        List<String> trainConsist = new ArrayList<>();
+public class TransactionSort {
 
-        // Display initial bogie count
-        System.out.println("Train consist initialized.");
-        System.out.println("Initial bogie count: " + trainConsist.size());
+    // Bubble Sort (by fee)
+    static void bubbleSort(List<Transaction> list) {
+        int n = list.size();
+        boolean swapped;
 
-        // Program continues...
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+
+            for (int j = 0; j < n - i - 1; j++) {
+                if (list.get(j).fee > list.get(j + 1).fee) {
+                    Collections.swap(list, j, j + 1);
+                    swapped = true;
+                }
+            }
+
+            if (!swapped) break; // early termination
+        }
+    }
+
+    // Insertion Sort (fee + timestamp)
+    static void insertionSort(List<Transaction> list) {
+        for (int i = 1; i < list.size(); i++) {
+            Transaction key = list.get(i);
+            int j = i - 1;
+
+            while (j >= 0 &&
+                    (list.get(j).fee > key.fee ||
+                            (list.get(j).fee == key.fee &&
+                                    list.get(j).timestamp.compareTo(key.timestamp) > 0))) {
+
+                list.set(j + 1, list.get(j));
+                j--;
+            }
+            list.set(j + 1, key);
+        }
+    }
+
+    // High fee detection
+    static void findOutliers(List<Transaction> list) {
+        for (Transaction t : list) {
+            if (t.fee > 50) {
+                System.out.println("Outlier: " + t);
+            }
+        }
     }
 }
