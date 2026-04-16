@@ -1,50 +1,58 @@
-import java.util.regex.*;
+import java.util.*;
+
+// 🔹 Goods Bogie Class
+class GoodsBogie {
+    String type;   // Cylindrical, Open, Box
+    String cargo;  // Petroleum, Coal, Grain
+
+    public GoodsBogie(String type, String cargo) {
+        this.type = type;
+        this.cargo = cargo;
+    }
+
+    @Override
+    public String toString() {
+        return "Type: " + type + ", Cargo: " + cargo;
+    }
+}
 
 // 🔹 Main App
 public class TrainConsistManagementApp {
 
-    // 🔸 Validate Train ID
-    public static boolean validateTrainID(String trainId) {
-        if (trainId == null) return false;
-
-        String trainPattern = "TRN-\\d{4}"; // TRN-1234
-        Pattern pattern = Pattern.compile(trainPattern);
-        Matcher matcher = pattern.matcher(trainId);
-
-        return matcher.matches();
-    }
-
-    // 🔸 Validate Cargo Code
-    public static boolean validateCargoCode(String cargoCode) {
-        if (cargoCode == null) return false;
-
-        String cargoPattern = "PET-[A-Z]{2}"; // PET-AB
-        Pattern pattern = Pattern.compile(cargoPattern);
-        Matcher matcher = pattern.matcher(cargoCode);
-
-        return matcher.matches();
-    }
-
-    // 🔹 Main Method
     public static void main(String[] args) {
 
-        // 🔸 Sample Inputs
-        String trainId1 = "TRN-1234";
-        String trainId2 = "TRAIN12";
+        // 🔸 Step 1: Create list of goods bogies
+        List<GoodsBogie> bogies = new ArrayList<>();
 
-        String cargo1 = "PET-AB";
-        String cargo2 = "PET-ab";
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        bogies.add(new GoodsBogie("Open", "Coal"));
+        bogies.add(new GoodsBogie("Box", "Grain"));
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
 
-        // 🔸 Validate Train IDs
-        System.out.println("Train ID " + trainId1 + " valid: " + validateTrainID(trainId1));
-        System.out.println("Train ID " + trainId2 + " valid: " + validateTrainID(trainId2));
+        // 🔸 Display bogies
+        System.out.println("Goods Bogies:");
+        bogies.forEach(System.out::println);
 
-        // 🔸 Validate Cargo Codes
-        System.out.println("Cargo Code " + cargo1 + " valid: " + validateCargoCode(cargo1));
-        System.out.println("Cargo Code " + cargo2 + " valid: " + validateCargoCode(cargo2));
+        // 🔸 Step 2: Safety check using allMatch()
+        boolean isSafe = bogies.stream()
+                .allMatch(b ->
+                        !b.type.equalsIgnoreCase("Cylindrical") ||
+                        b.cargo.equalsIgnoreCase("Petroleum")
+                );
 
-        // 🔸 Edge Cases
-        System.out.println("Empty Train ID valid: " + validateTrainID(""));
-        System.out.println("Null Cargo Code valid: " + validateCargoCode(null));
+        // 🔸 Step 3: Display result
+        System.out.println("\nSafety Compliance Status: " + (isSafe ? "SAFE" : "UNSAFE"));
+
+        // 🔸 Test case: introduce violation
+        bogies.add(new GoodsBogie("Cylindrical", "Coal"));
+
+        boolean isSafeAfterViolation = bogies.stream()
+                .allMatch(b ->
+                        !b.type.equalsIgnoreCase("Cylindrical") ||
+                        b.cargo.equalsIgnoreCase("Petroleum")
+                );
+
+        System.out.println("After adding invalid bogie: " +
+                (isSafeAfterViolation ? "SAFE" : "UNSAFE"));
     }
 }
